@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-# Plotting x and y with a redline, and limitting x to range 10
+'''
+Plotting x and y with a redline, and limitting x to range 10
+'''
 
 import numpy as np
 import matplotlib.pyplot as plt
