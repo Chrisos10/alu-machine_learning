@@ -18,16 +18,21 @@ def determinant(matrix):
     num_rows = len(matrix)
 
     # Early return for 0x0 matrix
-    if num_rows == 0:
+    # Check if the matrix is empty
+    if matrix == [[]]:  # Handle empty matrix [[]] as a special case
         return 1
 
-    # Validate square shape
-    if any(len(row) != num_rows for row in matrix):
+    # Check if the matrix is square
+    if len(matrix) != len(matrix[0]):
         raise ValueError("matrix must be a square matrix")
 
-    # Base case for 1x1 matrix
-    if num_rows == 1:
+    # Handle 1x1 matrix case
+    if len(matrix) == 1:
         return matrix[0][0]
+
+    # Handle 2x2 matrix case
+    if len(matrix) == 2:
+        return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
 
     # Recursive case for matrices larger than 1x1
     det = 0
