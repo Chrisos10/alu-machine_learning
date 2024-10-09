@@ -49,6 +49,7 @@ class Poisson:
             k = int(k)
         if k < 0:
             return 0
+
     def cdf(self, k):
         """Calculates the value of the CDF (cumulative distribution function)
         for a given number of “successes”"""
