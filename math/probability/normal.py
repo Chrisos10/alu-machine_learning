@@ -38,3 +38,8 @@ class Normal:
         """Calculates the value of the PDF for a given x-value"""
         return (self.E ** (-0.5 * ((x - self.mean) / self.stddev) ** 2)
                 / (self.stddev * ((2 * self.PI) ** 0.5)))
+
+    def cdf(self, x):
+        """Calculates the value of the CDF for a given x-value"""
+        return (0.5 * (1 + self.erf((x - self.mean) /
+                                    (self.stddev * 2 ** 0.5))))
