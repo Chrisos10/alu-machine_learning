@@ -31,4 +31,3 @@ class MultiNormal:
         self.mean = mean
         cov = np.matmul(data - mean, data.T - mean.T) / (n - 1)
         self.cov = cov
-        
