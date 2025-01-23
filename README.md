@@ -1,1 +1,1 @@
-Alu_MAchin_Learning
+alu_machine_learning
