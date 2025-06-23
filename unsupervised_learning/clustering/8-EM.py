@@ -1,63 +1,73 @@
+
 #!/usr/bin/env python3
-
+# -*- coding: utf-8 -*-
 """
-This module contains a function that perfoms
-expectation maximization for a GMM
+EM.py file
 """
-
 import numpy as np
 initialize = __import__('4-initialize').initialize
 expectation = __import__('6-expectation').expectation
 maximization = __import__('7-maximization').maximization
 
 
-def expectation_maximization(X, k,
-                             iterations=1000, tol=1e-5, verbose=False):
+def expectation_maximization(X, k, iterations=1000, tol=1e-5, verbose=False):
     """
-    initializes variables for a Gaussian Mixture Model
+    Function that performs the expectation maximization for a GMM:
 
-    X: numpy.ndarray (n, d) containing the dataset
-        - n no. of data points
-        - d no. of dimensions for each data point
-    k: positive integer containing the number of clusters
-    iterations: positive integer containing the maximum number of iterations
-    tol: non-negative float containing tolerance of the log likelihood
-    verbose: boolean that determines if output should be printed
-    returns:
-        pi, m, S, g, l or None, None, None, None, None on failure
-        - pi: numpy.ndarray (k,) containing the priors for each cluster
-        - m: numpy.ndarray (k, d) containing centroid means for each cluster
-        - S: numpy.ndarray (k, d, d) covariance matrices for each cluster
-        - g: numpy.ndarray (k, n) containing the posterior
-            probabilities for each data point in each cluster
-        - l: log likelihood of the model
+    Arguments:
+     - X is a numpy.ndarray of shape (n, d) containing the data set
+     - k is a positive integer containing the number of clusters
+     - iterations is a positive integer containing the maximum number
+        of iterations for the algorithm
+     - tol is a non-negative float containing tolerance of the log likelihood,
+        used to determine early stopping i.e. if the difference is less than
+        or equal to tol you should stop the algorithm
+     - verbose is a boolean that determines if you should print information
+        about the algorithm
+
+    Returns:
+     pi, m, S, g, l, or None, None, None, None, None on failure
+     - pi is a numpy.ndarray of shape (k,) containing the priors for
+        each cluster
+     - m is a numpy.ndarray of shape (k, d) containing the centroid means for
+        each cluster
+     - S is a numpy.ndarray of shape (k, d, d) containing the covariance
+        matrices for each cluster
+     - g is a numpy.ndarray of shape (k, n) containing the probabilities for
+        each data point in each cluster
+     - l is the log likelihood of the model
     """
+
     if not isinstance(X, np.ndarray) or len(X.shape) != 2:
         return None, None, None, None, None
-    if not isinstance(k, int) or k <= 0:
+    if type(k) != int or k <= 0 or k >= X.shape[0]:
         return None, None, None, None, None
-    if not isinstance(iterations, int) or iterations <= 0:
+    if type(iterations) != int or iterations <= 0:
         return None, None, None, None, None
-    if not isinstance(tol, float) or tol < 0:
+    if type(tol) != float or tol <= 0:
         return None, None, None, None, None
-    if not isinstance(verbose, bool):
+    if type(verbose) != bool:
         return None, None, None, None, None
 
     pi, m, S = initialize(X, k)
-    g, l = expectation(X, pi, m, S)
-    prev_like = i = 0
-    msg = "Log Likelihood after {} iterations: {}"
+    prev_like = 0
+    g, likelihood = expectation(X, pi, m, S)
 
     for i in range(iterations):
-        if verbose and i % 10 == 0:
-            print(msg.format(i, total_log_like.round(5)))
+        if verbose and (i % 10 == 0):
+            msg = 'Log Likelihood after {} iterations: {}'\
+                .format(i, likelihood.round(5))
+            print(msg)
         pi, m, S = maximization(X, g)
-        g, total_log_like = expectation(X, pi, m, S)
-        if abs(prev_like - total_log_like) <= tol:
+        g, likelihood = expectation(X, pi, m, S)
+
+        if abs(likelihood - prev_like) <= tol:
             break
-        prev_like = total_log_like
+        prev_like = likelihood
 
     if verbose:
-        print(msg.format(i + 1, total_log_like.round(5)))
+        msg = 'Log Likelihood after {} iterations: {}'\
+            .format(i + 1, likelihood.round(5))
+        print(msg)
 
-    return pi, m, S, g, total_log_like
+    return pi, m, S, g, likelihood
